@@ -1,4 +1,3 @@
-
 "use client"
 
 import React from 'react';
@@ -21,7 +20,8 @@ export function Hero({ hero, carousel }: HeroProps) {
       id="beranda" 
       className="relative w-full bg-[#0d2e1c] pt-[70px] md:pt-[80px]"
     >
-      <div className="relative w-full h-[50vh] sm:h-[60vh] md:h-[75vh] lg:h-[calc(100vh-80px)] overflow-hidden">
+      {/* Container Carousel: Full Viewport Height minus Navbar height */}
+      <div className="relative w-full h-[calc(100vh-70px)] md:h-[calc(100vh-80px)] overflow-hidden">
         <Swiper
           spaceBetween={0}
           centeredSlides={true}
@@ -55,6 +55,7 @@ export function Hero({ hero, carousel }: HeroProps) {
         </Swiper>
       </div>
 
+      {/* Hero Content Overlay */}
       <div className="absolute inset-0 pointer-events-none z-[5] bg-gradient-to-t from-[#0d2e1c]/40 via-transparent to-transparent flex flex-col justify-center items-center text-center p-6 mt-[80px]">
         <h1 className="text-white text-3xl md:text-5xl lg:text-6xl font-headline font-bold mb-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] max-w-4xl tracking-tight">
           {hero.title || 'TPA AL IMAN'}
