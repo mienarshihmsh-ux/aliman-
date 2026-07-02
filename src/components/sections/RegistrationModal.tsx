@@ -1,7 +1,7 @@
 
 "use client"
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Dialog, 
   DialogContent, 
@@ -72,7 +72,6 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result as string;
-        // Ambil hanya bagian base64-nya saja
         resolve(result.split(',')[1]);
       };
       reader.onerror = reject;
@@ -83,7 +82,6 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validasi dasar frontend
     if (!formData.nama || !formData.nisn || !formData.nik || !files.foto || !files.ijazah || !files.kk) {
       toast({
         title: "Form Tidak Lengkap",
@@ -111,8 +109,7 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
       const ijazahBase64 = await fileToBase64(files.ijazah);
       const kkBase64 = await fileToBase64(files.kk);
 
-      // 2. Kirim Data ke Apps Script menggunakan URLSearchParams
-      // Ini akan mengisi e.parameter di Google Apps Script, yang merupakan cara paling stabil
+      // 2. Kirim Data ke Apps Script
       const bodyParams = new URLSearchParams();
       bodyParams.append('nama', formData.nama);
       bodyParams.append('nisn', formData.nisn);
@@ -136,7 +133,7 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
         throw new Error(result.message || 'Gagal menyimpan data ke server');
       }
 
-      // 3. Proses Pembayaran Midtrans (Hanya jika simpan data berhasil)
+      // 3. Proses Pembayaran Midtrans
       const orderId = `REG-${Date.now()}-${formData.nisn}`;
       const amount = 50000; 
 
@@ -152,22 +149,25 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
 
       // 4. Buka Midtrans Snap UI
       if (window.snap) {
+        // PENTING: Tutup modal pendaftaran SEBELUM membuka Snap
+        // Ini agar overlay modal tidak menghalangi interaksi klik pada Snap popup
+        onClose();
+
         window.snap.pay(paymentResult.token, {
           onSuccess: (result: any) => {
             toast({
               title: "Pendaftaran Berhasil!",
               description: `Terima kasih ${formData.nama}, pendaftaran dan pembayaran telah selesai.`,
             });
-            onClose();
+            // Reset form (opsional karena modal sudah tertutup)
             setFormData({ nama: '', nisn: '', nik: '' });
             setFiles({ foto: null, ijazah: null, kk: null });
           },
           onPending: (result: any) => {
             toast({
               title: "Menunggu Pembayaran",
-              description: "Silakan selesaikan pembayaran Anda sebelum menutup halaman ini.",
+              description: "Silakan selesaikan pembayaran Anda sesuai instruksi.",
             });
-            onClose();
           },
           onError: (result: any) => {
             toast({
@@ -178,9 +178,8 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
           },
           onClose: () => {
             toast({
-              description: "Data tersimpan, silakan selesaikan pembayaran nanti jika diperlukan.",
+              description: "Proses pendaftaran dilanjutkan setelah pembayaran selesai.",
             });
-            onClose();
           }
         });
       } else {
@@ -201,7 +200,7 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[650px] max-h-[95vh] overflow-y-auto rounded-3xl p-8 border-none shadow-2xl z-[1200]">
+      <DialogContent className="sm:max-w-[650px] max-h-[95vh] overflow-y-auto rounded-3xl p-8 border-none shadow-2xl">
         <DialogHeader className="mb-6">
           <DialogTitle className="text-2xl font-headline font-bold text-primary flex items-center gap-3">
             <i className="fas fa-paper-plane"></i> Form Pendaftaran Santri Baru
