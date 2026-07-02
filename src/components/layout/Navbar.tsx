@@ -53,7 +53,7 @@ export function Navbar({ logo, onOpenModal }: NavbarProps) {
           onClick={onOpenModal}
           className="nav-btn ml-4 bg-[#f9e79f] text-[#1e8449] px-6 py-2.5 rounded-full font-bold hover:scale-105 transition-all flex items-center gap-2 shadow-md"
         >
-          <i className="fas fa-envelope"></i> Pesan
+          <i className="fas fa-paper-plane"></i> Daftar
         </button>
       </div>
 
@@ -74,7 +74,7 @@ export function Navbar({ logo, onOpenModal }: NavbarProps) {
           onClick={onOpenModal}
           className="mt-4 bg-[#f9e79f] text-[#1e8449] w-full py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg"
         >
-          <i className="fas fa-envelope"></i> Pesan
+          <i className="fas fa-paper-plane"></i> Daftar
         </button>
       </div>
     </nav>
