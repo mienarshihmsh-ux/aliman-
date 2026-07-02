@@ -34,7 +34,7 @@ export default function RootLayout({
         <Script 
           src="https://app.sandbox.midtrans.com/snap/snap.js" 
           data-client-key="SB-Mid-client-FBGELqULvvZ8eF0E"
-          strategy="lazyOnload"
+          strategy="afterInteractive"
         />
       </body>
     </html>

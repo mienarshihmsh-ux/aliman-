@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from 'react';
@@ -129,31 +128,34 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
 
       // 2. Proses Pembayaran Midtrans
       const orderId = `INV-${Date.now()}-${formData.nisn}`;
-      const amount = 50000; // Contoh biaya pendaftaran: Rp 50.000
+      const amount = 50000; // Biaya pendaftaran
 
-      const { token } = await createPaymentToken({
+      const paymentResult = await createPaymentToken({
         amount,
         orderId,
         customerName: formData.nama
       });
 
+      if (!paymentResult || !paymentResult.token) {
+        throw new Error("Gagal mendapatkan token pembayaran dari Midtrans.");
+      }
+
       // 3. Buka Midtrans Snap UI
       if (window.snap) {
-        window.snap.pay(token, {
+        window.snap.pay(paymentResult.token, {
           onSuccess: (result: any) => {
             toast({
               title: "Pembayaran Berhasil!",
               description: `Terima kasih ${formData.nama}, pendaftaran Anda telah lengkap.`,
             });
             onClose();
-            // Reset form
             setFormData({ nama: '', nisn: '', nik: '' });
             setFiles({ foto: null, ijazah: null, kk: null });
           },
           onPending: (result: any) => {
             toast({
               title: "Menunggu Pembayaran",
-              description: "Silakan selesaikan pembayaran Anda di gerai atau bank terdekat.",
+              description: "Silakan selesaikan pembayaran Anda sesuai instruksi di jendela Midtrans.",
             });
             onClose();
           },
@@ -166,9 +168,15 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
           },
           onClose: () => {
             toast({
-              description: "Anda belum menyelesaikan pembayaran.",
+              description: "Anda menutup jendela pembayaran sebelum selesai.",
             });
           }
+        });
+      } else {
+        toast({
+          title: "Sistem Pembayaran Belum Siap",
+          description: "Mohon tunggu sebentar atau muat ulang halaman jika masalah berlanjut.",
+          variant: "destructive"
         });
       }
 
