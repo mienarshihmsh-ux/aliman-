@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from 'react';
@@ -102,7 +101,6 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
       const ijazahBase64 = await fileToBase64(files.ijazah);
       const kkBase64 = await fileToBase64(files.kk);
 
-      // Gunakan URLSearchParams agar terbaca oleh e.parameter di Apps Script
       const bodyParams = new URLSearchParams();
       bodyParams.append('nama', formData.nama);
       bodyParams.append('email', formData.email);
@@ -124,19 +122,18 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
 
       const result = await response.json();
 
-      // Tangani pesan error/validasi dari Apps Script secara anggun
       if (result.result !== 'success') {
         setLoading(false);
         Swal.fire({
-          title: 'Validasi Gagal',
+          title: 'Gagal Menyimpan Data',
           text: result.message || 'Terjadi kesalahan pada server.',
           icon: 'warning',
           confirmButtonColor: '#1e8449',
         });
-        return; // Hentikan proses, jangan lanjut ke Midtrans
+        return; // Hentikan proses, modal tetap terbuka untuk perbaikan
       }
 
-      // 3. Proses Pembayaran Midtrans jika pendaftaran ke Sheet sukses
+      // 3. Proses Pembayaran Midtrans
       const orderId = `REG-${Date.now()}-${formData.nisn}`;
       const amount = 50000; 
 
@@ -159,7 +156,7 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
       }
 
       if (window.snap) {
-        // Tutup modal agar overlay tidak menghalangi popup Midtrans
+        // Tutup modal agar tidak menghalangi popup Midtrans
         onClose();
         
         window.snap.pay(paymentResult.token, {

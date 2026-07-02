@@ -41,6 +41,11 @@
   }
 }
 
+/* Pastikan SweetAlert2 selalu berada di atas modal Dialog Radix/ShadCN */
+.swal2-container {
+  z-index: 10000 !important;
+}
+
 .hero-gradient {
   background: linear-gradient(135deg, #1e8449 0%, #145a32 100%);
 }
