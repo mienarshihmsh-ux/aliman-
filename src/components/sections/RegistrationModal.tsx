@@ -105,7 +105,7 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
       const bodyParams = new URLSearchParams();
       bodyParams.append('nama', formData.nama);
       bodyParams.append('email', formData.email);
-      bodyParams.append('telepon', formData.telepon);
+      bodyParams.append('telepon', formData.telepon); // Perbaikan: Menambahkan field telepon
       bodyParams.append('nisn', formData.nisn);
       bodyParams.append('nik', formData.nik);
       bodyParams.append('foto', fotoBase64);
