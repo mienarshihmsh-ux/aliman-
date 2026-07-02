@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from 'react';
@@ -34,6 +33,7 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     nama: '',
+    email: '',
     nisn: '',
     nik: '',
   });
@@ -81,7 +81,7 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.nama || !formData.nisn || !formData.nik || !files.foto || !files.ijazah || !files.kk) {
+    if (!formData.nama || !formData.email || !formData.nisn || !formData.nik || !files.foto || !files.ijazah || !files.kk) {
       Swal.fire({
         title: 'Form Tidak Lengkap',
         text: 'Semua kolom wajib diisi!',
@@ -122,6 +122,7 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
       // 2. Kirim Data ke Apps Script menggunakan URLSearchParams
       const bodyParams = new URLSearchParams();
       bodyParams.append('nama', formData.nama);
+      bodyParams.append('email', formData.email);
       bodyParams.append('nisn', formData.nisn);
       bodyParams.append('nik', formData.nik);
       bodyParams.append('foto', fotoBase64);
@@ -150,7 +151,8 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
       const paymentResult = await createPaymentToken({
         amount,
         orderId,
-        customerName: formData.nama
+        customerName: formData.nama,
+        email: formData.email
       });
 
       if (!paymentResult || !paymentResult.token) {
@@ -159,18 +161,17 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
 
       // 4. Buka Midtrans Snap UI
       if (window.snap) {
-        // PENTING: Tutup modal pendaftaran SEBELUM membuka Snap agar tidak menghalangi klik
         onClose();
 
         window.snap.pay(paymentResult.token, {
           onSuccess: (result: any) => {
             Swal.fire({
               title: 'Pendaftaran Berhasil!',
-              text: `Terima kasih ${formData.nama}, pendaftaran dan pembayaran telah selesai.`,
+              text: `Terima kasih ${formData.nama}, pendaftaran dan pembayaran telah selesai. Cek email Anda untuk bukti pembayaran.`,
               icon: 'success',
               confirmButtonColor: '#1e8449',
             });
-            setFormData({ nama: '', nisn: '', nik: '' });
+            setFormData({ nama: '', email: '', nisn: '', nik: '' });
             setFiles({ foto: null, ijazah: null, kk: null });
           },
           onPending: (result: any) => {
@@ -223,23 +224,39 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
             <i className="fas fa-paper-plane"></i> Form Pendaftaran Santri Baru
           </DialogTitle>
           <DialogDescription className="text-base">
-            Isi formulir dengan benar. Setelah terkirim, Anda akan diarahkan ke pembayaran administrasi (Rp 50.000).
+            Isi formulir dengan benar. Anda akan diarahkan ke pembayaran administrasi (Rp 50.000) setelah data terkirim.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="nama" className="flex items-center gap-2 text-foreground font-semibold">
-              <i className="fas fa-user text-primary"></i> Nama Lengkap <span className="text-red-500">*</span>
-            </Label>
-            <Input 
-              id="nama" 
-              placeholder="Contoh: Ibrahim Hassan" 
-              className="h-12 border-2 focus:border-primary transition-all rounded-xl"
-              value={formData.nama}
-              onChange={handleInputChange}
-              required 
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="nama" className="flex items-center gap-2 text-foreground font-semibold">
+                <i className="fas fa-user text-primary"></i> Nama Lengkap <span className="text-red-500">*</span>
+              </Label>
+              <Input 
+                id="nama" 
+                placeholder="Ibrahim Hassan" 
+                className="h-12 border-2 focus:border-primary transition-all rounded-xl"
+                value={formData.nama}
+                onChange={handleInputChange}
+                required 
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email" className="flex items-center gap-2 text-foreground font-semibold">
+                <i className="fas fa-envelope text-primary"></i> Email <span className="text-red-500">*</span>
+              </Label>
+              <Input 
+                id="email" 
+                type="email"
+                placeholder="contoh@gmail.com" 
+                className="h-12 border-2 focus:border-primary transition-all rounded-xl"
+                value={formData.email}
+                onChange={handleInputChange}
+                required 
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

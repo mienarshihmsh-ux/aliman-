@@ -10,7 +10,7 @@ export async function createPaymentToken(orderData: {
   amount: number;
   orderId: string;
   customerName: string;
-  email?: string;
+  email: string;
 }) {
   try {
     // Inisialisasi Snap client dengan Server Key Sandbox
@@ -30,7 +30,7 @@ export async function createPaymentToken(orderData: {
       },
       customer_details: {
         first_name: orderData.customerName,
-        email: orderData.email || 'santri@aliman.com',
+        email: orderData.email,
       },
       item_details: [
         {
