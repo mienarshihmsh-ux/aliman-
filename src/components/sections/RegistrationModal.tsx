@@ -12,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { cn } from '@/lib/utils';
 import { createPaymentToken } from '@/app/actions/payment';
 import Swal from 'sweetalert2';
 
@@ -99,7 +98,7 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
     if (!formData.nama || !formData.email || !formData.telepon || !formData.nisn || !formData.nik || !files.foto || !files.ijazah || !files.kk) {
       Swal.fire({
         title: 'Form Tidak Lengkap',
-        text: 'Semua kolom wajib diisi!',
+        text: 'Semua kolom wajib diisi dan berkas wajib diunggah!',
         icon: 'warning',
         confirmButtonColor: '#1e8449',
       });
@@ -109,10 +108,12 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
     setLoading(true);
 
     try {
+      // 1. Konversi berkas ke Base64
       const fotoBase64 = await fileToBase64(files.foto);
       const ijazahBase64 = await fileToBase64(files.ijazah);
       const kkBase64 = await fileToBase64(files.kk);
 
+      // 2. Kirim data ke Google Apps Script
       const bodyParams = new URLSearchParams();
       bodyParams.append('nama', formData.nama);
       bodyParams.append('email', formData.email);
@@ -132,6 +133,7 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
 
       const result = await response.json();
 
+      // Tangani error dari Apps Script (Misal: NISN ganda)
       if (result.result !== 'success') {
         setLoading(false);
         Swal.fire({
@@ -143,6 +145,7 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
         return;
       }
 
+      // 3. Proses Pembayaran Midtrans
       const orderId = `REG-${Date.now()}-${formData.nisn}`;
       const amount = 50000; 
 
@@ -188,9 +191,10 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
 
     } catch (error: any) {
       setLoading(false);
+      console.error("Submission error:", error);
       Swal.fire({
-        title: 'Kesalahan',
-        text: 'Gagal mengirim data. Silakan coba lagi.',
+        title: 'Kesalahan Sistem',
+        text: 'Gagal menghubungi server pendaftaran. Silakan coba lagi nanti.',
         icon: 'error',
         confirmButtonColor: '#1e8449',
       });
@@ -264,7 +268,7 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
 
           <DialogFooter>
             <Button type="submit" className="w-full h-14 text-lg font-bold rounded-xl hero-gradient" disabled={loading}>
-              {loading ? 'Sedang Mengunggah...' : 'Kirim & Bayar Sekarang'}
+              {loading ? 'Sedang Memproses...' : 'Kirim & Bayar Sekarang'}
             </Button>
           </DialogFooter>
         </form>

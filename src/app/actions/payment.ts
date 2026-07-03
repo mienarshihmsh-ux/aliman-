@@ -14,6 +14,7 @@ export async function createPaymentToken(orderData: {
 }) {
   try {
     // Inisialisasi Snap client menggunakan Environment Variable
+    // Pastikan variabel ini sudah diset di .env atau dashboard hosting
     const snap = new Midtrans.Snap({
       isProduction: false,
       serverKey: process.env.MIDTRANS_SERVER_KEY || '',
