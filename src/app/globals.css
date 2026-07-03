@@ -42,8 +42,7 @@
 }
 
 /* 
- * Perbaikan Kritis: Memastikan SweetAlert2 selalu berada di lapisan teratas 
- * dan dapat diklik meskipun modal Radix/ShadCN sedang terbuka.
+ * Memastikan SweetAlert2 selalu berada di depan modal ShadCN/Radix 
  */
 .swal2-container {
   z-index: 10000 !important;

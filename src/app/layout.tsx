@@ -13,6 +13,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Mengambil client key dari environment variable
+  const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || '';
+
   return (
     <html lang="id">
       <head>
@@ -30,10 +33,10 @@ export default function RootLayout({
       <body className="font-body antialiased">
         {children}
         <Toaster />
-        {/* Midtrans Snap JS - Sandbox Mode dengan Client Key yang diberikan */}
+        {/* Midtrans Snap JS - Menggunakan Environment Variable untuk data-client-key */}
         <Script 
           src="https://app.sandbox.midtrans.com/snap/snap.js" 
-          data-client-key="SB-Mid-client-FBGELqULvvZ8eF0E"
+          data-client-key={clientKey}
           strategy="afterInteractive"
         />
       </body>
