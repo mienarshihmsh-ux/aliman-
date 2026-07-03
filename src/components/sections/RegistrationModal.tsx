@@ -28,6 +28,8 @@ interface RegistrationModalProps {
   appsScriptUrl: string;
 }
 
+const MAX_FILE_SIZE = 1024 * 1024; // 1MB dalam bytes
+
 export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: RegistrationModalProps) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -64,7 +66,18 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, files: selectedFiles } = e.target;
     if (selectedFiles && selectedFiles[0]) {
-      setFiles(prev => ({ ...prev, [id]: selectedFiles[0] }));
+      const file = selectedFiles[0];
+      if (file.size > MAX_FILE_SIZE) {
+        Swal.fire({
+          title: 'Berkas Terlalu Besar',
+          text: `Ukuran maksimal ${file.name} adalah 1MB. Silakan kompres berkas Anda.`,
+          icon: 'warning',
+          confirmButtonColor: '#1e8449',
+        });
+        e.target.value = ''; // Reset input
+        return;
+      }
+      setFiles(prev => ({ ...prev, [id]: file }));
     }
   };
 
@@ -96,14 +109,16 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
     setLoading(true);
 
     try {
+      // 1. Persiapkan Berkas
       const fotoBase64 = await fileToBase64(files.foto);
       const ijazahBase64 = await fileToBase64(files.ijazah);
       const kkBase64 = await fileToBase64(files.kk);
 
+      // 2. Kirim ke Google Apps Script
       const bodyParams = new URLSearchParams();
       bodyParams.append('nama', formData.nama);
       bodyParams.append('email', formData.email);
-      bodyParams.append('noTelp', formData.telepon); 
+      bodyParams.append('noTelp', formData.telepon); // Sesuai dengan Apps Script: noTelp
       bodyParams.append('nisn', formData.nisn);
       bodyParams.append('nik', formData.nik);
       bodyParams.append('foto', fotoBase64);
@@ -124,14 +139,15 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
       if (result.result !== 'success') {
         setLoading(false);
         Swal.fire({
-          title: 'Gagal Menyimpan Data',
+          title: 'Pendaftaran Gagal',
           text: result.message || 'Terjadi kesalahan pada server.',
-          icon: 'warning',
+          icon: 'error',
           confirmButtonColor: '#1e8449',
         });
-        return; // Berhenti di sini, modal tetap terbuka
+        return;
       }
 
+      // 3. Proses Pembayaran Midtrans
       const orderId = `REG-${Date.now()}-${formData.nisn}`;
       const amount = 50000; 
 
@@ -145,40 +161,40 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
       if (!paymentResult || !paymentResult.token) {
         setLoading(false);
         Swal.fire({
-          title: 'Sistem Pembayaran Sibuk',
-          text: 'Data tersimpan, tapi gagal memuat pembayaran. Hubungi admin.',
-          icon: 'error',
+          title: 'Data Tersimpan',
+          text: 'Pendaftaran berhasil, tetapi gagal memuat sistem pembayaran. Silakan hubungi admin.',
+          icon: 'info',
           confirmButtonColor: '#1e8449',
         });
         return;
       }
 
       if (window.snap) {
-        onClose();
+        onClose(); // Tutup modal agar overlay tidak menghalangi klik Midtrans
         
         window.snap.pay(paymentResult.token, {
-          onSuccess: (result: any) => {
+          onSuccess: () => {
             Swal.fire({
               title: 'Pendaftaran Berhasil!',
-              text: `Terima kasih ${formData.nama}, pendaftaran dan pembayaran telah selesai.`,
+              text: `Alhamdulillah ${formData.nama}, pendaftaran dan pembayaran telah selesai.`,
               icon: 'success',
               confirmButtonColor: '#1e8449',
             });
             setFormData({ nama: '', email: '', telepon: '', nisn: '', nik: '' });
             setFiles({ foto: null, ijazah: null, kk: null });
           },
-          onPending: (result: any) => {
+          onPending: () => {
             Swal.fire({
               title: 'Menunggu Pembayaran',
-              text: 'Silakan selesaikan pembayaran sesuai instruksi Midtrans.',
+              text: 'Silakan selesaikan pembayaran sesuai instruksi Midtrans yang muncul.',
               icon: 'info',
               confirmButtonColor: '#1e8449',
             });
           },
-          onError: (result: any) => {
+          onError: () => {
             Swal.fire({
               title: 'Pembayaran Gagal',
-              text: 'Terjadi kesalahan pada sistem pembayaran.',
+              text: 'Terjadi kesalahan pada sistem pembayaran. Silakan coba beberapa saat lagi.',
               icon: 'error',
               confirmButtonColor: '#1e8449',
             });
@@ -188,8 +204,8 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
         setLoading(false);
         Swal.fire({
           title: 'Sistem Belum Siap',
-          text: 'Script pembayaran belum termuat sempurna. Silakan coba lagi.',
-          icon: 'error',
+          text: 'Gagal memuat sistem pembayaran. Silakan refresh halaman dan coba lagi.',
+          icon: 'warning',
           confirmButtonColor: '#1e8449',
         });
       }
@@ -197,8 +213,8 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
     } catch (error: any) {
       setLoading(false);
       Swal.fire({
-        title: 'Kesalahan Sistem',
-        text: 'Gagal terhubung ke server pendaftaran. Pastikan internet Anda stabil.',
+        title: 'Kesalahan Jaringan',
+        text: 'Gagal mengirim data. Pastikan koneksi internet stabil dan berkas tidak terlalu besar.',
         icon: 'error',
         confirmButtonColor: '#1e8449',
       });
@@ -213,7 +229,7 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
             <i className="fas fa-paper-plane"></i> Form Pendaftaran Santri Baru
           </DialogTitle>
           <DialogDescription className="text-base">
-            Lengkapi data santri. Biaya pendaftaran sebesar Rp 50.000 akan diminta setelah formulir dikirim.
+            Lengkapi data santri. Biaya pendaftaran Rp 50.000 (Bayar via Midtrans).
           </DialogDescription>
         </DialogHeader>
 
@@ -296,21 +312,21 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
           <div className="space-y-5 bg-muted/30 p-6 rounded-2xl border border-dashed border-primary/20">
             <div className="space-y-2">
               <Label htmlFor="foto" className="flex items-center gap-2 text-foreground font-semibold">
-                <i className="fas fa-camera text-primary"></i> Foto Santri (.jpg/.png) <span className="text-red-500">*</span>
+                <i className="fas fa-camera text-primary"></i> Foto Santri (.jpg/.png, Max 1MB) <span className="text-red-500">*</span>
               </Label>
               <Input id="foto" type="file" accept=".jpg,.jpeg,.png" onChange={handleFileChange} className="bg-white border-2 rounded-xl" required />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="ijazah" className="flex items-center gap-2 text-foreground font-semibold">
-                <i className="fas fa-graduation-cap text-primary"></i> Ijazah (PDF) <span className="text-red-500">*</span>
+                <i className="fas fa-graduation-cap text-primary"></i> Ijazah (PDF, Max 1MB) <span className="text-red-500">*</span>
               </Label>
               <Input id="ijazah" type="file" accept=".pdf" onChange={handleFileChange} className="bg-white border-2 rounded-xl" required />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="kk" className="flex items-center gap-2 text-foreground font-semibold">
-                <i className="fas fa-users text-primary"></i> Kartu Keluarga (PDF) <span className="text-red-500">*</span>
+                <i className="fas fa-users text-primary"></i> Kartu Keluarga (PDF, Max 1MB) <span className="text-red-500">*</span>
               </Label>
               <Input id="kk" type="file" accept=".pdf" onChange={handleFileChange} className="bg-white border-2 rounded-xl" required />
             </div>
@@ -327,7 +343,7 @@ export function RegistrationModal({ isOpen, onClose, appsScriptUrl }: Registrati
             >
               {loading ? (
                 <span className="flex items-center gap-2">
-                  <i className="fas fa-spinner animate-spin"></i> Memproses...
+                  <i className="fas fa-spinner animate-spin"></i> Sedang Mengunggah Berkas...
                 </span>
               ) : (
                 <span className="flex items-center gap-2">
