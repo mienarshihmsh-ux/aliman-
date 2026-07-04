@@ -79,7 +79,10 @@ export default function Home() {
       
       <Hero hero={data.hero} carousel={data.hero_carousel} />
       
-      <Tentang data={data.tentang} />
+      <Tentang 
+        data={data.tentang} 
+        imageUrl={data.hero_carousel?.items?.[0]?.image} 
+      />
       
       <Gallery data={data.gallery} />
       

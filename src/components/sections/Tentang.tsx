@@ -3,12 +3,14 @@
 import React from 'react';
 import { TentangData } from '@/lib/types';
 import { Info } from 'lucide-react';
+import Image from 'next/image';
 
 interface TentangProps {
   data: TentangData;
+  imageUrl?: string;
 }
 
-export function Tentang({ data }: TentangProps) {
+export function Tentang({ data, imageUrl }: TentangProps) {
   return (
     <section id="tentang" className="section section-light py-24 px-[5%] bg-white">
       <div className="max-w-6xl mx-auto">
@@ -29,24 +31,39 @@ export function Tentang({ data }: TentangProps) {
             </div>
           </div>
 
-          {/* Kolom Statistik */}
-          <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-6">
-            <div className="flex flex-col sm:flex-row lg:flex-row gap-4 justify-center items-center lg:items-stretch sm:justify-start lg:justify-end">
-              <StatCard 
-                icon="fas fa-users" 
-                label="Santri Aktif" 
-                value={data.santri || '0'} 
-              />
-              <StatCard 
-                icon="fas fa-chalkboard-teacher" 
-                label="Tenaga Pengajar" 
-                value={data.ustadz || '0'} 
-              />
-              <StatCard 
-                icon="fas fa-book-quran" 
-                label="Program Unggulan" 
-                value={data.program || '0'} 
-              />
+          {/* Kolom Kanan: Gambar (Desktop) & Statistik */}
+          <div className="lg:col-span-5 flex flex-col gap-8">
+            {/* Gambar Utama hanya muncul di Desktop */}
+            {imageUrl && (
+              <div className="hidden lg:block relative aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl border-4 border-white transition-transform duration-500 hover:scale-[1.02]">
+                <Image 
+                  src={imageUrl} 
+                  alt="Tentang TPA AL IMAN" 
+                  fill 
+                  className="object-cover"
+                  data-ai-hint="islamic education"
+                />
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-6">
+              <div className="flex flex-col sm:flex-row lg:flex-row gap-4 justify-center items-center lg:items-stretch sm:justify-start lg:justify-end">
+                <StatCard 
+                  icon="fas fa-users" 
+                  label="Santri Aktif" 
+                  value={data.santri || '0'} 
+                />
+                <StatCard 
+                  icon="fas fa-chalkboard-teacher" 
+                  label="Tenaga Pengajar" 
+                  value={data.ustadz || '0'} 
+                />
+                <StatCard 
+                  icon="fas fa-book-quran" 
+                  label="Program Unggulan" 
+                  value={data.program || '0'} 
+                />
+              </div>
             </div>
           </div>
         </div>
