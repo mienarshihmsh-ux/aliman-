@@ -61,22 +61,21 @@ body[data-scroll-locked] .swal2-container {
 }
 
 .section-title {
-  @apply text-center text-3xl md:text-4xl font-bold text-primary mb-12 relative;
+  @apply text-center text-3xl md:text-4xl font-bold text-primary mb-6 relative;
 }
 
 .section-title::after {
   content: '';
   display: block;
-  @apply w-20 h-1 bg-gradient-to-r from-primary to-accent mx-auto mt-4 rounded-full;
+  @apply w-16 h-1.5 bg-accent mx-auto mt-2 rounded-full;
 }
 
 .stat-card {
-  background: linear-gradient(135deg, #1e8449, #27ae60);
-  @apply p-8 rounded-2xl text-center text-white transition-transform duration-300 shadow-lg;
+  @apply p-8 rounded-2xl text-center text-white transition-transform duration-300 shadow-lg bg-primary;
 }
 
 .stat-card:hover {
-  @apply -translate-y-1.5;
+  @apply -translate-y-1.5 shadow-2xl;
 }
 
 .info-item {
