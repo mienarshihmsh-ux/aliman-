@@ -5,7 +5,7 @@ Aplikasi web modern untuk manajemen pendaftaran santri baru di TPA AL IMAN. Diba
 ## 🚀 Fitur Utama
 
 - **Landing Page Interaktif:** Tampilan responsif dengan desain bernuansa Islami yang modern.
-- **Gallery Kegiatan:** Menampilkan dokumentasi kegiatan TPA menggunakan slider dan modal gambar.
+- **Gallery Kegiatan:** Menampilkan dokumentasi kegiatan TPA menggunakan modal gambar.
 - **Formulir Pendaftaran Digital:** Pengisian data santri lengkap termasuk unggah berkas (Foto, Ijazah, KK).
 - **Integrasi Pembayaran (Midtrans):** Pembayaran biaya pendaftaran otomatis menggunakan Midtrans Snap API.
 - **Penyimpanan Cloud (Google Sheets & Drive):** Data pendaftaran disimpan langsung ke Google Sheets dan berkas diunggah ke Google Drive melalui Google Apps Script.
@@ -30,7 +30,7 @@ Untuk menjalankan aplikasi ini, Anda perlu membuat file `.env` di folder root da
 MIDTRANS_SERVER_KEY=isi_dengan_server_key_anda
 NEXT_PUBLIC_MIDTRANS_CLIENT_KEY=isi_dengan_client_key_anda
 
-# Apps Script URL (Jika diperlukan di sisi server)
+# Apps Script URL
 NEXT_PUBLIC_APPS_SCRIPT_URL=isi_dengan_url_deployment_apps_script
 ```
 
