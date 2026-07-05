@@ -15,7 +15,7 @@ export function Tentang({ data, imageUrl }: TentangProps) {
   return (
     <section id="tentang" className="section section-light py-24 px-[5%] bg-white">
       <div className="max-w-6xl mx-auto">
-        {/* Judul dengan Ikon dan Teks yang sejajar di tengah dengan garis kuning di bawahnya */}
+        {/* Judul dengan Ikon dan Teks yang sejajar di tengah dengan garis dekoratif kuning dari globals.css */}
         <h2 className="section-title">
           <span className="flex items-center justify-center gap-3">
             <Info className="w-8 h-8 md:w-9 md:h-9 text-primary" />
@@ -40,7 +40,7 @@ export function Tentang({ data, imageUrl }: TentangProps) {
           <div className="lg:col-span-5 flex flex-col gap-6">
             {/* Gambar Utama dengan object-contain agar tidak terpotong bagian kepala */}
             {imageUrl && (
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border-4 border-white transition-transform duration-500 hover:scale-[1.01] bg-muted/5">
+              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border-4 border-white transition-transform duration-500 hover:scale-[1.01] bg-muted/5">
                 <Image 
                   src={imageUrl} 
                   alt="Tentang TPA AL IMAN" 
@@ -52,8 +52,8 @@ export function Tentang({ data, imageUrl }: TentangProps) {
               </div>
             )}
 
-            {/* Statistik Cards disusun Horizontal */}
-            <div className="flex flex-row gap-3 w-full">
+            {/* Statistik Cards disusun Responsif: Vertikal di Mobile, Horizontal di Desktop */}
+            <div className="flex flex-col md:flex-row gap-4 w-full">
               <StatCard 
                 icon="fas fa-users" 
                 label="Santri Aktif" 
@@ -78,12 +78,12 @@ export function Tentang({ data, imageUrl }: TentangProps) {
 }
 
 const StatCard = ({ icon, label, value }: { icon: string; label: string; value: string | number }) => (
-  <div className="bg-primary p-4 md:p-5 rounded-2xl text-center text-white transition-all duration-300 shadow-lg hover:-translate-y-1.5 flex flex-col items-center justify-center flex-1 min-h-[120px]">
-    <div className="mb-2 text-[#f9e79f]">
-      <i className={`${icon} text-2xl md:text-3xl`}></i>
+  <div className="bg-primary p-6 md:p-5 rounded-3xl text-center text-white transition-all duration-300 shadow-lg hover:-translate-y-1.5 flex flex-col items-center justify-center flex-1 min-h-[140px] md:min-h-[120px]">
+    <div className="mb-3 md:mb-2 text-[#f9e79f]">
+      <i className={`${icon} text-3xl`}></i>
     </div>
-    <div className="text-xl md:text-2xl font-bold mb-0.5">{value}</div>
-    <div className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest opacity-90 leading-tight">
+    <div className="text-2xl font-bold mb-1">{value}</div>
+    <div className="text-[10px] md:text-[11px] font-bold uppercase tracking-widest opacity-90 leading-tight">
       {label}
     </div>
   </div>
