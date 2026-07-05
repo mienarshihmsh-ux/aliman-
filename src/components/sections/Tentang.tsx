@@ -1,3 +1,4 @@
+
 "use client"
 
 import React from 'react';
@@ -19,7 +20,7 @@ export function Tentang({ data, imageUrl }: TentangProps) {
         </h2>
 
         <div className="grid lg:grid-cols-12 gap-12 items-start mt-16">
-          {/* Kolom Deskripsi */}
+          {/* Kolom Deskripsi (Kiri) */}
           <div className="lg:col-span-7 relative">
             <div className="absolute -top-10 -left-6 opacity-10">
               <i className="fas fa-quote-left text-8xl text-primary"></i>
@@ -31,39 +32,38 @@ export function Tentang({ data, imageUrl }: TentangProps) {
             </div>
           </div>
 
-          {/* Kolom Kanan: Gambar (Desktop) & Statistik */}
-          <div className="lg:col-span-5 flex flex-col gap-8">
-            {/* Gambar Utama hanya muncul di Desktop */}
+          {/* Kolom Media & Statistik (Kanan) */}
+          <div className="lg:col-span-5 flex flex-col gap-6">
+            {/* Gambar Utama (Desktop Only) */}
             {imageUrl && (
-              <div className="hidden lg:block relative aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl border-4 border-white transition-transform duration-500 hover:scale-[1.02]">
+              <div className="hidden lg:block relative aspect-video rounded-2xl overflow-hidden shadow-xl border-4 border-white transition-transform duration-500 hover:scale-[1.02]">
                 <Image 
                   src={imageUrl} 
                   alt="Tentang TPA AL IMAN" 
                   fill 
                   className="object-cover"
-                  data-ai-hint="islamic education"
+                  data-ai-hint="islamic activity"
                 />
               </div>
             )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-6">
-              <div className="flex flex-col sm:flex-row lg:flex-row gap-4 justify-center items-center lg:items-stretch sm:justify-start lg:justify-end">
-                <StatCard 
-                  icon="fas fa-users" 
-                  label="Santri Aktif" 
-                  value={data.santri || '0'} 
-                />
-                <StatCard 
-                  icon="fas fa-chalkboard-teacher" 
-                  label="Tenaga Pengajar" 
-                  value={data.ustadz || '0'} 
-                />
-                <StatCard 
-                  icon="fas fa-book-quran" 
-                  label="Program Unggulan" 
-                  value={data.program || '0'} 
-                />
-              </div>
+            {/* Statistik Cards disusun Horizontal di Desktop */}
+            <div className="flex flex-row gap-3 w-full">
+              <StatCard 
+                icon="fas fa-users" 
+                label="Santri Aktif" 
+                value={data.santri || '0'} 
+              />
+              <StatCard 
+                icon="fas fa-chalkboard-teacher" 
+                label="Tenaga Pengajar" 
+                value={data.ustadz || '0'} 
+              />
+              <StatCard 
+                icon="fas fa-book-quran" 
+                label="Program Unggulan" 
+                value={data.program || '0'} 
+              />
             </div>
           </div>
         </div>
@@ -73,11 +73,13 @@ export function Tentang({ data, imageUrl }: TentangProps) {
 }
 
 const StatCard = ({ icon, label, value }: { icon: string; label: string; value: string | number }) => (
-  <div className="bg-primary p-8 rounded-2xl text-center text-white transition-all duration-300 shadow-xl hover:-translate-y-2 flex flex-col items-center justify-center min-w-[160px] flex-1">
-    <div className="mb-4 text-[#f9e79f]">
-      <i className={`${icon} text-4xl`}></i>
+  <div className="bg-primary p-4 md:p-6 rounded-xl text-center text-white transition-all duration-300 shadow-lg hover:-translate-y-1.5 flex flex-col items-center justify-center flex-1">
+    <div className="mb-2 text-[#f9e79f]">
+      <i className={`${icon} text-2xl md:text-3xl`}></i>
     </div>
-    <div className="text-4xl font-bold mb-1">{value}+</div>
-    <div className="text-[10px] font-bold uppercase tracking-widest opacity-80 whitespace-nowrap">{label}</div>
+    <div className="text-xl md:text-2xl font-bold mb-0.5">{value}++</div>
+    <div className="text-[8px] md:text-[9px] font-bold uppercase tracking-widest opacity-90 leading-tight">
+      {label}
+    </div>
   </div>
 );
