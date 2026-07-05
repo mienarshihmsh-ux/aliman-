@@ -15,7 +15,7 @@ export function Tentang({ data, imageUrl }: TentangProps) {
   return (
     <section id="tentang" className="section section-light py-24 px-[5%] bg-white">
       <div className="max-w-6xl mx-auto">
-        <h2 className="section-title flex items-center justify-center gap-3">
+        <h2 className="section-title flex items-center justify-center gap-3 text-center">
           <Info className="w-8 h-8 text-primary" /> Tentang Kami
         </h2>
 
@@ -36,12 +36,12 @@ export function Tentang({ data, imageUrl }: TentangProps) {
           <div className="lg:col-span-5 flex flex-col gap-6">
             {/* Gambar Utama */}
             {imageUrl && (
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border-4 border-white transition-transform duration-500 hover:scale-[1.01]">
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border-4 border-white transition-transform duration-500 hover:scale-[1.01] bg-muted/20">
                 <Image 
                   src={imageUrl} 
                   alt="Tentang TPA AL IMAN" 
                   fill 
-                  className="object-cover"
+                  className="object-contain"
                   data-ai-hint="islamic activity"
                   priority
                 />
