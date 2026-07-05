@@ -15,10 +15,13 @@ export function Tentang({ data, imageUrl }: TentangProps) {
   return (
     <section id="tentang" className="section section-light py-24 px-[5%] bg-white">
       <div className="max-w-6xl mx-auto">
-        {/* Judul yang dipastikan berada di tengah */}
-        <h2 className="section-title flex items-center justify-center gap-3 text-center w-full">
-          <Info className="w-8 h-8 text-primary" /> Tentang Kami
-        </h2>
+        {/* Judul dengan Ikon dan Teks yang sejajar di tengah */}
+        <div className="flex justify-center mb-12">
+          <h2 className="section-title flex items-center gap-3">
+            <Info className="w-9 h-9 text-primary" />
+            <span>Tentang Kami</span>
+          </h2>
+        </div>
 
         <div className="grid lg:grid-cols-12 gap-12 items-start mt-16">
           {/* Kolom Deskripsi (Kiri) */}
@@ -35,7 +38,7 @@ export function Tentang({ data, imageUrl }: TentangProps) {
 
           {/* Kolom Media & Statistik (Kanan) */}
           <div className="lg:col-span-5 flex flex-col gap-6">
-            {/* Gambar Utama dengan object-contain agar tidak terpotong */}
+            {/* Gambar Utama dengan object-contain agar tidak terpotong bagian kepala */}
             {imageUrl && (
               <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border-4 border-white transition-transform duration-500 hover:scale-[1.01] bg-muted/5">
                 <Image 
